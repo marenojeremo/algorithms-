@@ -2,23 +2,26 @@
 #include <stdlib.h>
 #include <string.h>
 
-// Function to merge two subarrays
+// Merge function to merge two subarrays
 void merge(char **arr, int left, int mid, int right) {
+    int i, j, k;
     int n1 = mid - left + 1;
     int n2 = right - mid;
 
     // Create temporary arrays
-    char *L = (char *)malloc(n1 * sizeof(char *));
-    char *R = (char *)malloc(n2 * sizeof(char *));
+    char **L = (char **)malloc(n1 * sizeof(char *));
+    char **R = (char **)malloc(n2 * sizeof(char *));
 
     // Copy data to temporary arrays L[] and R[]
-    for (int i = 0; i < n1; i++)
+    for (i = 0; i < n1; i++)
         L[i] = arr[left + i];
-    for (int j = 0; j < n2; j++)
+    for (j = 0; j < n2; j++)
         R[j] = arr[mid + 1 + j];
 
     // Merge the temporary arrays back into arr[left..right]
-    int i = 0, j = 0, k = left;
+    i = 0;
+    j = 0;
+    k = left;
     while (i < n1 && j < n2) {
         if (strcmp(L[i], R[j]) <= 0) {
             arr[k] = L[i];
@@ -49,40 +52,38 @@ void merge(char **arr, int left, int mid, int right) {
     free(R);
 }
 
-// Function to perform merge sort
+// Merge sort function
 void mergeSort(char **arr, int left, int right) {
     if (left < right) {
         int mid = left + (right - left) / 2;
+
+        // Sort first and second halves
         mergeSort(arr, left, mid);
         mergeSort(arr, mid + 1, right);
+
+        // Merge the sorted halves
         merge(arr, left, mid, right);
     }
 }
 
 int main() {
     int n;
+
     printf("Enter the number of mobile numbers: ");
     scanf("%d", &n);
 
-    // Allocating memory for an array of strings
-    char *mobileNumbers = (char *)malloc(n * sizeof(char *));
+    char **mobileNumbers = (char **)malloc(n * sizeof(char *));
+    printf("Enter the mobile numbers:\n");
     for (int i = 0; i < n; i++) {
-        mobileNumbers[i] = (char *)malloc(20 * sizeof(char));
-        printf("Enter mobile number %d: ", i + 1);
+        mobileNumbers[i] = (char *)malloc(12 * sizeof(char));
         scanf("%s", mobileNumbers[i]);
     }
 
-    // Sorting the mobile numbers using merge sort
     mergeSort(mobileNumbers, 0, n - 1);
 
-    // Displaying the sorted mobile numbers
-    printf("Sorted Mobile Numbers:\n");
+    printf("\nSorted mobile numbers:\n");
     for (int i = 0; i < n; i++) {
         printf("%s\n", mobileNumbers[i]);
-    }
-
-    // Freeing allocated memory
-    for (int i = 0; i < n; i++) {
         free(mobileNumbers[i]);
     }
     free(mobileNumbers);
