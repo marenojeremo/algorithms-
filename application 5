@@ -1,0 +1,82 @@
+```#include <stdio.h>
+#include <stdbool.h>
+#include <limits.h>
+
+// Define the number of routers and links in your network
+#define V 6
+
+// A function to find the maximum flow using the Ford-Fulkerson algorithm
+int fordFulkerson(int graph[V][V], int source, int sink) {
+    int maxFlow = 0;
+    int parent[V];
+    
+    while (true) {
+        // Create an array to track visited nodes and initialize it
+        bool visited[V];
+        for (int i = 0; i < V; i++)
+            visited[i] = false;
+        
+        // Create a queue for BFS and enqueue the source
+        int queue[V];
+        int front = 0, rear = 0;
+        queue[rear++] = source;
+        visited[source] = true;
+        parent[source] = -1;
+        
+        // Standard BFS loop
+        while (front < rear) {
+            int u = queue[front++];
+            for (int v = 0; v < V; v++) {
+                if (!visited[v] && graph[u][v] > 0) {
+                    queue[rear++] = v;
+                    parent[v] = u;
+                    visited[v] = true;
+                }
+            }
+        }
+        
+        // If we reached the sink in BFS, calculate the flow in this path
+        if (visited[sink]) {
+            int pathFlow = INT_MAX;
+            for (int v = sink; v != source; v = parent[v]) {
+                int u = parent[v];
+                if (graph[u][v] < pathFlow)
+                    pathFlow = graph[u][v];
+            }
+            // Update residual capacities and add path flow to the max flow
+            for (int v = sink; v != source; v = parent[v]) {
+                int u = parent[v];
+                graph[u][v] -= pathFlow;
+                graph[v][u] += pathFlow;
+            }
+            maxFlow += pathFlow;
+        } else {
+            // No more augmenting paths, exit the loop
+            break;
+        }
+    }
+    
+    return maxFlow;
+}
+
+int main() {
+    int graph[V][V] = {
+        {0, 16, 13, 0, 0, 0},
+        {0, 0, 10, 12, 0, 0},
+        {0, 4, 0, 0, 14, 0},
+        {0, 0, 9, 0, 0, 20},
+        {0, 0, 0, 7, 0, 4},
+        {0, 0, 0, 0, 0, 0}
+    };
+    
+    int source = 0, sink = 5;
+    int maxFlow = fordFulkerson(graph, source, sink);
+    
+    printf("The maximum possible flow from source to sink is %d\n", maxFlow);
+    
+    return 0;
+}
+Given an N×N chessboard, the task is to place N queens on the board 
+so that no two queens can attack each other. The objective of this 
+case study is to implement the N-Queens algorithm in C Language to 
+find all possible arrangements of the queens on the chessboard
